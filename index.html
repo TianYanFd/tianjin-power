@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>China Power</title>
+
+	<link rel="stylesheet" type="text/css" href="css/nav.css">
+	<link rel="stylesheet" type="text/css" href="font/iconfont.css">
+
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/nav.js"></script>
+</head>
+<body>
+<!-- 顶部菜单（来自bootstrap官方Demon）==================================== -->
+<nav style="width:100%;height:5%;float:left">
+    <div  >
+	    <a href="index.html" style="font-size:20px;font-weight:bold;font-family:STXingkai;color:#000000">天津电力管理系统</a>
+    </div>
+</nav>
+<!-- 左侧菜单选项========================================= -->
+<div class="nav" style=" float:left;height:90%;">
+	<div class="nav-top">
+		<div id="mini" style="border-bottom:1px solid 
+		(255,255,255,.1)"><img src="images/mini.png" ></div>
+	</div>
+	<ul>
+		<li class="nav-item">
+			<a href="javascript:;"><i class="my-icon nav-icon icon_2"></i><span>电力概况</span><i class="my-icon nav-more"></i></a>
+			<ul>
+				<li><a href="./html/map-analog-ge/map-baidu-tianjin-coal.html" target="menuFrame"><span>天津电力</span></a></li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+<!-- 右侧内容展示==================================================   -->   
+<div id="page_content" style="width:83%;height:90%;float:left">
+    <iframe id="menuFrame" name="menuFrame" width="100%" height="100%">
+    </iframe>
+</div>
+
+</body>
+</html>
