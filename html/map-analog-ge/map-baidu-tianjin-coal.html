@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+		<meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+		<div id="main" style="height: 100%"></div>
+   <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+		<!--<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+		<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+		<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+		<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+		<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+		<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+		 <script type="text/javascript" src="../../js/echarts.min.js"></script>
+		<script type="text/javascript" src="../../js/echarts-gl.min.js"></script>
+		<script type="text/javascript" src="../../js/ecStat.min.js"></script>
+		<script type="text/javascript" src="../../js/dataTool.min.js"></script>
+		<script type="text/javascript" src="../../js/bmap.min.js"></script>
+		<script type="text/javascript" src="../../js/simplex.js"></script>
+		<script type="text/javascript" src="../../js/tianjin.js"></script>
+		<script type="text/javascript">
+			<!-- 以下为本案例独有-->
+			var myChart = echarts.init(document.getElementById('main'));
+			// 节点名称、数值、机组构成
+			var data = [
+				{name: '国投北疆',   value: 4000, unit:'1000MW x 4' },
+				{name: '大唐盘山',   value: 2200, unit:'600MW x 2 + 500MW x 2' },
+				{name: '大港', value: 1316, unit:'329MW x 4' },
+				{name: '华能杨柳青', value: 1200, unit:'300MW x 4' },
+				{name: '军电热电',   value: 700, unit:'350MW x 2' },
+				{name: '国电津能热电',   value: 660, unit:'330MW x 2' },
+				{name: '陈塘热电',   value: 600, unit:'300MW x 2' }
+			];
+			// 节点坐标
+			var geoCoordMap = {
+				'国投北疆':  [117.927463, 39.218435],
+				'大唐盘山':  [117.465281, 39.977263],
+				'大港':  [117.496061, 38.775936],
+				'华能杨柳青':[117.040234, 39.153368],
+				'军电热电':  [117.415742, 39.054085],
+				'国电津能热电':  [117.357934, 39.218439],
+				'陈塘热电':  [117.239253, 39.053234]
+			};
+			// 将数据和坐标整合
+			var convertData = function (data) {
+				var res = [];
+				for (var i = 0; i < data.length; i++) {
+					var geoCoord = geoCoordMap[data[i].name];
+					if (geoCoord) {
+						res.push({
+							name: data[i].name,
+							value: geoCoord.concat(data[i].value).concat(data[i].unit)
+						});
+					}
+				}
+				return res;
+			};
+			myChart.setOption({
+				// 页面标题、副标题、连接
+				title: {
+					text: '天津主要煤电站分布图',
+					subtext: 'by Tianyan,数据截止到2018年底',
+					sublink: 'http://www.fyjs.cn/home.php?mod=space&uid=179031',
+					left: 'center',
+					textStyle: {
+						// 主标题颜色(黑色)
+						color: '#272523'
+					}
+				},
+				// 鼠标悬停事件
+				tooltip : {
+					trigger: 'item',
+					formatter: function (params) {
+						return params.name + '</br>' + '&nbsp&nbsp&nbsp cap: ' + params.value[2] + '&nbspMW' 
+							+ '</br>' + '&nbsp&nbsp&nbsp unit: ' + params.value[3];
+					}
+				},
+				// 报表图例
+				legend: {
+					orient: 'vertical',
+					y: 'bottom',
+					x:'right',
+					data:['Top 4','others'],
+					textStyle: {
+						color: '#272523'
+					}
+				},
+				// 地图初始化
+				bmap: {
+					// 初始化中心坐标
+					center: [117.216624, 39.142805],
+					// 初始化时地图缩放级别(数字越小，地图显示范围越大)
+					zoom: 10,
+					roam: true,
+					mapStyle: {
+						style:'normal'
+					}
+				},
+				series: [
+					// 设置采用哪个地图
+					{
+						type: 'scatter',
+						coordinateSystem: 'bmap',
+						data: [ [120, 30, 1] ]
+					},
+					// TOP4节点设置
+					{
+						name: 'Top 4',
+						type: 'effectScatter',
+						coordinateSystem: 'bmap',
+						data: convertData(data.sort(function (a, b) {
+							return b.value - a.value;
+						}).slice(0, 4)),
+						symbolSize: function (val) {
+							return val[2] / 150;
+						},
+						showEffectOn: 'render',
+						rippleEffect: {
+							brushType: 'stroke'
+						},
+						hoverAnimation: true,
+						label: {
+							normal: {
+								formatter: '{b}',
+								position: 'right',
+								show: false
+							}
+						},
+						itemStyle: {
+							normal: {
+								//坐标点的颜色(红色)
+								color:'#ff2400',
+								shadowBlur: 10,
+								//鼠标悬停时，提示语区块的背景颜色(浅灰色)
+								shadowColor: '#333333'
+							}
+						},
+						zlevel: 1
+					},
+					// others大众节点设置
+					{
+						name: 'others',
+						type: 'scatter',
+						coordinateSystem: 'bmap',
+						data: convertData(data.sort(function (a, b) {
+							return b.value - a.value;
+						}).slice(4, data.length)),
+						symbolSize: function (val) {
+							return val[2] / 70;
+						},
+						label: {
+							normal: {
+								formatter: '{b}',
+								position: 'right',
+								show: false
+							},
+							emphasis: {
+								show: false
+							}
+						},
+						itemStyle: {
+							normal: {
+								//坐标点的颜色(红色)
+								color: '#ff2400'
+							}
+						}
+					}
+		
+				]
+			});
+
+			var bmap = myChart.getModel().getComponent('bmap').getBMap();
+			bmap.addControl(new BMap.MapTypeControl());
+       </script>
+   </body>
+</html>
